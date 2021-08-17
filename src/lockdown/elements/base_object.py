@@ -1,46 +1,53 @@
 import os,sys
-import pygame
+import pygame as pg
 from pygame.locals import *
 from lockdown.library import get_image_dir, get_sound_dir
 
 
-class BaseObject(pygame.sprite.Sprite):
+class BaseObject:
 
-    def __init__(self,screen,size, name = "Base Object"):
-        super(BaseObject,self).__init__()
+    def __init__(self,screen,size, logger, name = "Base Object"):
+        self.__screen = screen
+        self.__position = (0,0)
+        self.__size = size
+        self.__name = name
+        self.__image = None
+        self.__sound = None
+        self.__rect = None
+        self.__images = []
+        self.__log = logger
 
-        self.screen = screen
-        self.pos = (0,0)
-        self.size = size
-        self.name = name
-        self.image = ""
-        self.sound = None
-
-    def set_image_from_file(self,file_name,image_type = 0):
+    def __get_image(self, file_name, image_type = 0):
         # image_type 0 : regular ; 1 : with transparency
         
         img_file = os.path.join(get_image_dir(), file_name)
 
         if image_type == 0:
-            temp_image = pygame.image.load(img_file).convert()
+            image = pg.image.load(img_file).convert()
         else:
-            temp_image = pygame.image.load(img_file)
+            image = pg.image.load(img_file)
 
-        self.set_image(temp_image)
+        return image
 
-    def set_image(self,image):
-        self.image =pygame.transform.scale(image,self.size)
-        self.image.set_colorkey([250,250,0],RLEACCEL)
-        self.rect = self.image.get_rect()
+    def set_image(self,file_name,image_type = 0):
+        image = self.__get_image(file_name, image_type)
+        self.__image =pg.transform.scale(image,self.__size)
+        self.__image.set_colorkey([250,250,0],RLEACCEL)
+        self.__rect = self.image.get_rect()
 
-    def set_pos(self,pos):
-        self.pos = pos
-        self.rect.x = self.pos[0]
-        self.rect.y = self.pos[1]
+    # def set_images(self, list_of_filenames, image_type = 0):
+    #     for file in list_of_filenames:
+    #         image = self.__get_image(file, image_type)
+    #         image = pg.transform.scale(image,self.__size)
+    #         self.__image.set_colorkey([250,250,0],RLEACCEL)
+    #         self.__rect = self.image.get_rect()
+    #         self.__images.append(image)
 
-    def set_sound_from_file(self,file_name):
-        #is_music = True will use mixer.Music
-        self.sound = pygame.mixer.Sound(os.path.join(get_sound_dir(),file_name))
+    # def set_active_image(self, index):
+    #     return self.__images[index]
+
+    def set_sound(self,file_name):
+        self.__sound = pg.mixer.Sound(os.path.join(get_sound_dir(),file_name))
 
     def play_sound(self,play):
         if play == True:
@@ -48,11 +55,36 @@ class BaseObject(pygame.sprite.Sprite):
         else:
             self.sound.stop()
 
-    # def move(self,moving):
-    #     self.moving = moving
+    @property
+    def position(self):
+        return self.__position;
 
-    #     if self.sound != None:
-    #         if self.moving == True:
-    #             self.play_sound(True)
-    #         else:
-    #             self.play_sound(False)
+    @position.setter
+    def position(self, value):
+        self.__position = value
+
+    @property
+    def rect(self):
+        return self.__rect
+
+    @rect.setter
+    def rect(self, value):
+        self.__rect = value
+        
+    @property
+    def logger(self):
+        return self.__log
+
+    @property
+    def screen(self):
+        return self.__screen
+
+    @property
+    def image(self):
+        return self.__image
+
+    @property
+    def size(self):
+        return self.__size
+
+
