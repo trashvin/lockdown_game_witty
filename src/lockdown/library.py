@@ -1,3 +1,4 @@
+from ntpath import join
 import os, sys
 
 def get_image_dir():
@@ -19,6 +20,6 @@ def get_font(font_name):
 def get_image(image_name):
     return os.path.join(get_image_dir(), image_name)
 
-
-
+def get_sound(sound_name):
+    return os.path.join(get_sound_dir(), sound_name)
 

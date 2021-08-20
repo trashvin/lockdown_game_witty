@@ -1,2 +1,2 @@
-# lockdown_game_witty
-a simple game using python and pygame
+# lockdown
+a simple game created using pygame.
