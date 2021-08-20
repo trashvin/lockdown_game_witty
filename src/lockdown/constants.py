@@ -15,6 +15,7 @@ RED = (255,0,0)
 GREEN = (0,204,34)
 Y_GREEN = (154, 205,50)
 GRAY = (222, 222, 222)
+
 # virus data
 VIRUS_POINTS = [10, 50, 30, 40]
 VIRUS_HIT_LIFE = [1, 1, 5, 6]
@@ -32,6 +33,11 @@ BRICK_BOUNCE = 'metal_hit.wav'
 VIRUS_KILL = 'virus_kill.wav'
 VIRUS_BOUNCE = 'virus_bounce.wav'
 WARNING_MUSIC = 'warning.wav'
+
+# fonts
+
+FONT_MAIN_1 = 'minecraft.otf'
+FONT_SUB_1 = "calibri"
 
 # string resources
 

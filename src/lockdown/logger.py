@@ -4,9 +4,12 @@ from logging.handlers import RotatingFileHandler
 from logging import Formatter
 from datetime import datetime
 
-
+""" 
+class name : Logger
+inherits from : none
+purpose : this is a logger for logging operations 
+"""
 class Logger:
-    """ This is a logger for logging operations """
     
     def __init__(self):
         # copy trader main log
@@ -23,6 +26,16 @@ class Logger:
 
         self.__logger.setLevel(10)
     
+    """
+    name : log
+    parameters:
+        message - the message to log
+        level - integer value specifying the log level. see below
+            1 - error
+            2 - warning
+            3 - information
+            4 - debug
+    """
     def log(self, message, level=3):
         if level == 1:
             self.__logger.error(message)

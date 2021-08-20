@@ -50,6 +50,9 @@ class BaseObject:
     def set_active_image(self, index):
         return self.__images[index]
 
+    def show(self):
+        pass
+
     @property
     def position(self):
         return self.__position;

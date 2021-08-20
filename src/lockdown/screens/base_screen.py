@@ -1,5 +1,10 @@
 from lockdown.logger import Logger
 
+"""
+class name: BaseScreen
+inherits from: none
+purpose : base class for all screens
+"""
 class BaseScreen:
     def __init__(self, name, bg_color, screen, logger):
         self.__name = name

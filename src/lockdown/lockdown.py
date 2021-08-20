@@ -52,19 +52,21 @@ class Lockdown:
         self.__ball.rect = self.__ball.rect.move((paddle_loc[0]+65, paddle_loc[1]- 15))
         self.__start_loc_ball = (paddle_loc[0]+65, paddle_loc[1]- 15)
 
-        self.__test = [[1,13,4,2,1,1,1,2,3,1,2,1],
-                       [3,2,2,1,1,1,1,1,1,2,2,1],
-                       [2,2,2,1,1,1,1,1,1,1,1,1],
-                       [3,2,2,1,1,11,11,3,1,1,1,2],
-                       [3,2,2,1,1,1,1,1,1,2,2,4]] 
-        self.__test_screen_elements = [
-            [13,13,13,13,13,13,13,13,13,13,13,13],
-            [13,13,13,13,13,13,13,13,13,13,13,13],
+        # self.__test = [[1,13,4,2,1,1,1,2,3,1,2,1],
+        #                [3,2,2,1,1,1,1,1,1,2,2,1],
+        #                [2,2,2,1,1,1,1,1,1,1,1,1],
+        #                [3,2,2,1,1,11,11,3,1,1,1,2],
+        #                [3,2,2,1,1,1,1,1,1,2,2,4]] 
+        # self.__test_screen_elements = [
+        #     [13,13,13,13,13,13,13,13,13,13,13,13,13,13,13],
+        #     [13,13,13,13,13,13,13,13,13,13,13,13],
        
-            [13,13,13,13,13,13,13,13,13,13,13,13],
-            [13,13,13,13,13,13,13,13,13,13,13,13],
-            [1,2,2,1,1,1,1,1,1,2,2,1]
-        ]
+        #     [13,13,13,13,13,13,13,13,13,13,13,13],
+        #     [13,13,13,13,13,13,13,13,13,13,13,13],
+        #     [1,2,2,1,1,1,1,1,1,2,2,1]
+        #]
+
+        self.__level_layout = retrieve_level_layout(self.__level)
         self.__elements = []
         self.__initialize_elements()
         self.__score = 0
@@ -72,32 +74,32 @@ class Lockdown:
         self.__wall_bounce_sound = self.__bounce_sound = pg.mixer.Sound(get_sound(WALL_BOUNCE))
         
 
+    
     def __initialize_elements(self):
-        x = 50
+        x = 40
         y = 50
-        for row in self.__test_screen_elements:
+        for row in self.__level_layout:
             element_row = []
             for element in row:
-                if element < 10:
-                    virus = Virus(self.screen, (50,50),self.__log, element)
+                if int(element) < 10:
+                    virus = Virus(self.screen, (50,50),self.__log, int(element))
                     virus.rect = virus.rect.move((x,y))
                     element_row.append(virus)
                     self.__element_count +=1
                 else:
-                    brick = Brick(self.screen, (50,50),self.__log, element)
+                    brick = Brick(self.screen, (50,50),self.__log, int(element))
                     brick.rect = brick.rect.move((x,y))
                     element_row.append(brick)
 
-                x += 60
-            x = 50
-            y += 60    
+                x += 50
+            x = 40
+            y += 50    
             self.__elements.append(element_row)
 
 
     def start(self):
         self.__log.log('starting the game ...')
-        print('starting lockdown ...')
-
+        
         # the main loop
         fps_clock = pg.time.Clock()
         direction_x = 1
@@ -110,23 +112,18 @@ class Lockdown:
             fps_clock.tick(FPS)
             events = pg.event.get()
             for event in events:
-                print(event.type)
                 if event.type == pg.QUIT:
                     done = True 
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_SPACE:
-                        print('here1')
                         if self.__current_screen == 0:
                             self.screens[self.__current_screen].exit()
                             self.__current_screen = 1
                         elif self.__current_screen == 1:
-                            print('here2')
                             if level_status == 0:
-                                print('here4')
                                 self.screens[self.__current_screen].hide_start_info()
                                 level_status = 1
                             else:
-                                print('here5')
                                 if ball_dead:
                                     self.screens[self.__current_screen].restart_life(False)
                                     ball_dead = False
@@ -195,7 +192,9 @@ class Lockdown:
                                         element.hit()
                                         self.__log.log('virus was hit')
                                         direction_y *= -1
-                                        self.__element_count -= 1
+
+                                        if element.visible == False:
+                                            self.__element_count -= 1
 
                                         if self.__element_count == 0:
                                             level_status = 3
