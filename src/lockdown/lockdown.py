@@ -31,9 +31,12 @@ class Lockdown:
             self.__log.log(f'error initializing pygame. {ex}', level = 1)
             #  do system exit
         self.__element_count = 0
-        self.__initialize()
+        self.initialize()
+
+    def set_level(self, level):
+        self.__level = level
         
-    def __initialize(self):
+    def initialize(self):
         opening_screen = OpeningScreen('opening screen', BLACK, self.screen, self.__log)
         game_screen = GameScreen('game screen', (33,33,33), self.screen, self.__log)
 
@@ -52,20 +55,6 @@ class Lockdown:
         self.__ball.rect = self.__ball.rect.move((paddle_loc[0]+65, paddle_loc[1]- 15))
         self.__start_loc_ball = (paddle_loc[0]+65, paddle_loc[1]- 15)
 
-        # self.__test = [[1,13,4,2,1,1,1,2,3,1,2,1],
-        #                [3,2,2,1,1,1,1,1,1,2,2,1],
-        #                [2,2,2,1,1,1,1,1,1,1,1,1],
-        #                [3,2,2,1,1,11,11,3,1,1,1,2],
-        #                [3,2,2,1,1,1,1,1,1,2,2,4]] 
-        # self.__test_screen_elements = [
-        #     [13,13,13,13,13,13,13,13,13,13,13,13,13,13,13],
-        #     [13,13,13,13,13,13,13,13,13,13,13,13],
-       
-        #     [13,13,13,13,13,13,13,13,13,13,13,13],
-        #     [13,13,13,13,13,13,13,13,13,13,13,13],
-        #     [1,2,2,1,1,1,1,1,1,2,2,1]
-        #]
-
         self.__level_layout = retrieve_level_layout(self.__level)
         self.__elements = []
         self.__initialize_elements()
@@ -73,8 +62,6 @@ class Lockdown:
         self.__life = 3
         self.__wall_bounce_sound = self.__bounce_sound = pg.mixer.Sound(get_sound(WALL_BOUNCE))
         
-
-    
     def __initialize_elements(self):
         x = 40
         y = 50
@@ -131,9 +118,11 @@ class Lockdown:
                     elif event.key == pg.K_RETURN:
                         if self.__current_screen == 1:
                             if level_status == 3:
-                                self.__initialize()
+                                self.set_level(self.__level)
+                                self.initialize()
                                 self.start()
                                 self.__log.log('restarting game ....')
+                                self.__level += 1
                     elif event.key == pg.K_ESCAPE:
                         if self.__current_screen == 1:
                             if level_status == 3:

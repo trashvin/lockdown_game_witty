@@ -8,6 +8,9 @@ ANTI_FRICTION = 2
 GAME_SCREEN_START = (30,30)
 GAME_SCREEN_END = (805,748)
 
+# level
+MAX_LEVEL = 2
+
 # colors
 BLACK = (0,0,0)
 WHITE = (255, 255, 255)
@@ -52,4 +55,6 @@ TEXT_LIFE = 'Life '
 TEXT_ENTER_RESTART = 'Press [ENTER] to Restart the game'
 TEXT_ESC_QUIT = 'Press [ESC] to Quit the game'
 TEXT_FUTURE = 'Game is under development, more to come!'
-TEXT_COMPLETE = 'Level Complete'
+TEXT_LEVEL_COMPLETE = 'Level Complete'
+TEXT_GAME_COMPLETE = 'Game Complete'
+TEXT_ENTER_NEXT = 'Press [ENTER] to move to the next level'

@@ -24,7 +24,7 @@ class GameScreen(BaseScreen):
         self.__show_start_info = True
         self.__restart_life = False
         self.__show_lockdown_msg = False   
-        self.__show_completed_msg = False
+        self.__show_level_completed_msg = False
 
         self.__load_texts()
         self.__load_images()
@@ -93,12 +93,17 @@ class GameScreen(BaseScreen):
             self.screen.blit(self.__future_msg,(180,580))
             # pg.mixer.Channel(0).play(self.__lockdown_sound)
 
-        if self.__show_completed_msg:
-            self.screen.blit(self.__lockdown_board,(100,400))
-            self.screen.blit(self.__complete_msg,(230,425))
-            self.screen.blit(self.__restart_msg,(235,520))
-            self.screen.blit(self.__quit_msg,(260,550))
-            self.screen.blit(self.__future_msg,(180,580))
+        if self.__show_level_completed_msg:
+            self.screen.blit(self.__completion_board,(100,400))
+            if self.__level == MAX_LEVEL:
+                self.screen.blit(self.__game_complete_msg,(250,475))
+                self.screen.blit(self.__restart_msg,(235,520))
+                self.screen.blit(self.__quit_msg,(260,550))
+                self.screen.blit(self.__future_msg,(195,580))
+            else:
+                self.screen.blit(self.__level_complete_msg,(250,435))
+                self.screen.blit(self.__next_level_msg,(235,540)) 
+                self.screen.blit(self.__future_msg,(195,580))
 
     def exit(self):
         self.__sound.stop()
@@ -116,7 +121,7 @@ class GameScreen(BaseScreen):
         self.__show_lockdown_msg = value
 
     def show_completed_message(self, value):
-        self.__show_completed_msg = value
+        self.__show_level_completed_msg = value
     
     def hide_start_info(self):
         self.__show_start_info = False
@@ -136,6 +141,9 @@ class GameScreen(BaseScreen):
         self.__lockdown_board = pg.Surface((650, 230))
         self.__lockdown_board.fill(RED)
 
+        self.__completion_board = pg.Surface((650, 230))
+        self.__completion_board.fill(GREEN)
+
         self.__map_image = pg.image.load(get_image('map.jpg'))
         self.__map_image = pg.transform.scale(self.__map_image,(160,100))
 
@@ -154,11 +162,17 @@ class GameScreen(BaseScreen):
         self.__lockdown_msg = pg.font.Font(get_font(FONT_MAIN_1), 70)
         self.__lockdown_msg = self.__lockdown_msg.render(APP_NAME,1, WHITE)
 
-        self.__complete_msg = pg.font.Font(get_font(FONT_MAIN_1), 40)
-        self.__complete_msg = self.__complete_msg.render(TEXT_COMPLETE,1, WHITE)
+        self.__level_complete_msg = pg.font.Font(get_font(FONT_MAIN_1), 40)
+        self.__level_complete_msg = self.__level_complete_msg.render(TEXT_LEVEL_COMPLETE,1, WHITE)
+
+        self.__game_complete_msg = pg.font.Font(get_font(FONT_MAIN_1), 40)
+        self.__game_complete_msg = self.__game_complete_msg.render(TEXT_GAME_COMPLETE,1, WHITE)
 
         self.__restart_msg = pg.font.SysFont(FONT_SUB_1, 25)
         self.__restart_msg = self.__restart_msg.render(TEXT_ENTER_RESTART,1, GRAY)
+
+        self.__next_level_msg = pg.font.SysFont(FONT_SUB_1, 25)
+        self.__next_level_msg = self.__next_level_msg.render(TEXT_ENTER_NEXT,1, GRAY)
 
         self.__quit_msg = pg.font.SysFont(FONT_SUB_1, 25)
         self.__quit_msg = self.__quit_msg.render(TEXT_ESC_QUIT,1, GRAY)
