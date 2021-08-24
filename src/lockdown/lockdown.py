@@ -30,7 +30,7 @@ class Lockdown:
         except Exception as ex:
             self.__log.log(f'error initializing pygame. {ex}', level = 1)
             #  do system exit
-        self.__element_count = 0
+        
         self.initialize()
 
     def set_level(self, level):
@@ -43,7 +43,19 @@ class Lockdown:
         self.screens = [opening_screen, game_screen]
         self.__current_screen = 0
         self.__level = 1
+        self.__virus_count = 0
 
+        self.__initialize_ball_paddle_location()
+
+        self.__level_layout = retrieve_level_layout(self.__level)
+        self.__elements = []
+        self.__initialize_elements()
+        self.__score = 0
+        self.__life = 3
+        self.__wall_bounce_sound = self.__bounce_sound = pg.mixer.Sound(get_sound(WALL_BOUNCE))
+
+    def __initialize_ball_paddle_location(self):
+        game_screen = self.screens[1]
         paddle_loc = (((game_screen.game_area[1][0])/2-150/2), game_screen.game_area[1][1]-90)
         self.__paddle = Paddle(self.screen,(150,60), self.__log)
         self.__paddle.set_image(get_image('paddle_1.png'),1)
@@ -55,12 +67,19 @@ class Lockdown:
         self.__ball.rect = self.__ball.rect.move((paddle_loc[0]+65, paddle_loc[1]- 15))
         self.__start_loc_ball = (paddle_loc[0]+65, paddle_loc[1]- 15)
 
+    def next_level(self):
+        self.__current_screen = 1
+        self.__level += 1
+        self.__virus_count = 0
+
+        self.__initialize_ball_paddle_location()
+
         self.__level_layout = retrieve_level_layout(self.__level)
         self.__elements = []
         self.__initialize_elements()
-        self.__score = 0
         self.__life = 3
         self.__wall_bounce_sound = self.__bounce_sound = pg.mixer.Sound(get_sound(WALL_BOUNCE))
+
         
     def __initialize_elements(self):
         x = 40
@@ -72,7 +91,7 @@ class Lockdown:
                     virus = Virus(self.screen, (50,50),self.__log, int(element))
                     virus.rect = virus.rect.move((x,y))
                     element_row.append(virus)
-                    self.__element_count +=1
+                    self.__virus_count +=1
                 else:
                     brick = Brick(self.screen, (50,50),self.__log, int(element))
                     brick.rect = brick.rect.move((x,y))
@@ -117,16 +136,27 @@ class Lockdown:
                     
                     elif event.key == pg.K_RETURN:
                         if self.__current_screen == 1:
+                            # restart playing after the ball was dead or lockdown
                             if level_status == 3:
-                                self.set_level(self.__level)
+                                self.__log.log('restarting game ....')
+                                self.screens[self.__current_screen].show_completed_message(0)
                                 self.initialize()
                                 self.start()
-                                self.__log.log('restarting game ....')
-                                self.__level += 1
+                                
+                                # self.__level += 1
+                            elif level_status == 4:
+                                self.screens[self.__current_screen].show_completed_message(0)
+                                self.__log.log('advancing to a new level..')
+                                self.next_level()
+                                self.start()
+
+                                
+
                     elif event.key == pg.K_ESCAPE:
                         if self.__current_screen == 1:
-                            if level_status == 3:
+                            if level_status >= 3:
                                 done = True
+                                continue
                     
             self.screens[self.__current_screen].show() 
             
@@ -140,8 +170,12 @@ class Lockdown:
                 # if level has started , start the game
                 if level_status == 1:
                     
+                    # move the paddle based on the mouse location
                     mouse_x = pg.mouse.get_pos()[0]
-                    self.__paddle.move_with_mouse((mouse_x,GAME_SCREEN_END[1]-75),25+self.__paddle.size[0]/2,805-self.__paddle.size[0]/2)
+                    self.__paddle.move_with_mouse(
+                        (mouse_x,GAME_SCREEN_END[1]-75),
+                        25+self.__paddle.size[0]/2,805-self.__paddle.size[0]/2
+                    )
                     
                     if not ball_dead:   
                          
@@ -156,14 +190,18 @@ class Lockdown:
                             pg.mixer.Channel(0).play(self.__wall_bounce_sound)
                         if self.__ball.rect.bottom > game_area[1][1]:
                             direction_y = -1
-                            # pg.mixer.Channel(0).play(self.__wall_bounce_sound)
+                            pg.mixer.Channel(0).play(self.__wall_bounce_sound)
                             ball_dead = True
                             self.__life -= 1
                             self.screens[self.__current_screen].set_life(self.__life)
+
+                            # if all lives are spent, lockdown! else, just continue playing
                             if self.__life == 0:
+                                self.__log.log('game over, lockdown!')
                                 level_status = 3
                                 self.screens[self.__current_screen].set_lockdown(True)
                             else:
+                                self.__log.log('game continues with reduced life')
                                 self.screens[self.__current_screen].restart_life(True)
 
 
@@ -172,22 +210,33 @@ class Lockdown:
                             direction_y = -1
 
                         # check if the ball comes in contact with the elements
+                        # TODO: the logic is not perfect, improve it!
                         for element_row in self.__elements:
                             for element in element_row:
                                 if self.__ball.rect.colliderect(element.rect):
                                     if element.name == 'Virus' and element.visible == True: 
+                                        element.hit()
                                         self.__score += element.points
                                         self.screens[self.__current_screen].set_score(self.__score)
-                                        element.hit()
-                                        self.__log.log('virus was hit')
+                                        
+                                        # TODO :  improve this!
                                         direction_y *= -1
 
+                                        # lets make sure we have a count of active viruses
                                         if element.visible == False:
-                                            self.__element_count -= 1
+                                            self.__virus_count -= 1
 
-                                        if self.__element_count == 0:
-                                            level_status = 3
-                                            self.screens[self.__current_screen].show_completed_message(True)
+                                        # if the virus count is zero, lets end the level
+                                        if self.__virus_count == 0:
+                                            if self.__level == MAX_LEVEL:
+                                                level_status = 5
+                                                # show game completed
+                                                self.screens[self.__current_screen].show_completed_message(GAME_COMPLETE)
+                                            else:
+                                                level_status = 4
+                                                # show level completed
+                                                self.screens[self.__current_screen].show_completed_message(LEVEL_COMPLETE)
+                                    
                                     elif element.name == 'Brick':
                                         element.hit()
                                         direction_y *= -1

@@ -25,6 +25,7 @@ class GameScreen(BaseScreen):
         self.__restart_life = False
         self.__show_lockdown_msg = False   
         self.__show_level_completed_msg = False
+        self.__show_game_completed_msg = False
 
         self.__load_texts()
         self.__load_images()
@@ -95,15 +96,16 @@ class GameScreen(BaseScreen):
 
         if self.__show_level_completed_msg:
             self.screen.blit(self.__completion_board,(100,400))
-            if self.__level == MAX_LEVEL:
-                self.screen.blit(self.__game_complete_msg,(250,475))
-                self.screen.blit(self.__restart_msg,(235,520))
-                self.screen.blit(self.__quit_msg,(260,550))
-                self.screen.blit(self.__future_msg,(195,580))
-            else:
-                self.screen.blit(self.__level_complete_msg,(250,435))
-                self.screen.blit(self.__next_level_msg,(235,540)) 
-                self.screen.blit(self.__future_msg,(195,580))
+            self.screen.blit(self.__level_complete_msg,(250,435))
+            self.screen.blit(self.__next_level_msg,(235,540)) 
+            self.screen.blit(self.__future_msg,(195,580))
+
+        if self.__show_game_completed_msg:
+            self.screen.blit(self.__completion_board,(100,400))
+            self.screen.blit(self.__game_complete_msg,(250,435))
+            self.screen.blit(self.__restart_msg,(235,520))
+            self.screen.blit(self.__quit_msg,(260,550))
+            self.screen.blit(self.__future_msg,(195,580))
 
     def exit(self):
         self.__sound.stop()
@@ -120,9 +122,15 @@ class GameScreen(BaseScreen):
     def set_lockdown(self, value):
         self.__show_lockdown_msg = value
 
-    def show_completed_message(self, value):
-        self.__show_level_completed_msg = value
-    
+    def show_completed_message(self, completed_type = 1):
+        if completed_type == 1:
+            self.__show_level_completed_msg = True
+        elif completed_type == 2:
+            self.__show_game_completed_msg = True
+        else:
+            self.__show_level_completed_msg = False
+            self.__show_game_completed_msg = False
+
     def hide_start_info(self):
         self.__show_start_info = False
 

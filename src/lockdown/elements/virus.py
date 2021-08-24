@@ -21,8 +21,10 @@ class Virus(BaseObject):
         self.__kill_sound = pg.mixer.Sound(get_sound(VIRUS_KILL))
 
     def hit(self):
+        self.logger.log('a virus was hit',4)
         self.__hit_life -= 1
         if self.__hit_life == 0:
+            self.logger.log('a virus was killed',4)
             self.__visible = False
             pg.mixer.Channel(0).play(self.__kill_sound)
         else:
