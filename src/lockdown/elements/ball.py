@@ -11,11 +11,12 @@ class Ball(BaseObject):
         super().__init__(screen, size, logger, name)
         self.logger.log('initializing a ball')
 
-    def get_resulting_direction(self, current_dir, element):
-        element_rect = element.rect
-        if self.rect.top <= element_rect.bottom:
-            return (current_dir[0],-1)
-        elif self.rect.bottom >= element_rect.top:
-            return (current_dir[0],1)
+        self.__direction_x = 1
+        self.__direction_y = 1
+
+    def collides_with(self, element):
+        pass
+
+    
 
     
