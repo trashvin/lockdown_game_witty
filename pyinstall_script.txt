@@ -1,4 +1,0 @@
-pyinstaller --onefile --name %APP% main.py --paths ..\..\..\ka-env\Lib\site-packages --paths ..\..\kool-aide --icon=..\assets\images\kool-aide.ico
-
-
-- exe / folder with exe
