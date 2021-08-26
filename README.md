@@ -1,6 +1,7 @@
 # lockdown
-
-![lockdown](https://github.com/trashvin/lockdown_game_witty/blob/main/docfiles/lockdown.png)
+<center>
+![lockdown](https://github.com/trashvin/lockdown_game_witty/blob/main/docfiles/game_screen.png)
+</center>
 
 lockdown is a simple arcade game based on a popular retro game 'breakout'. this is an output from witty academy sessions for game app development using python and pygame. the topics and lessons can be found on this [link](https://trashvin.github.io/python-gamedev-2021/).
 
