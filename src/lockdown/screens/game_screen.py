@@ -55,22 +55,41 @@ class GameScreen(BaseScreen):
             for x in range(0,800, 30):
                 self.screen.blit(self.__rwall_image,(y,x))
 
+        self.screen.blit(self.__lockdown_board_small,(820,25))
         self.screen.blit(self.__lockdown_small,(825, 30))
         self.screen.blit(self.__map_image,(825,70))
+        self.screen.blit(self.__ctips_board_small,(820,205))
+        self.screen.blit(self.__ctips_image,(825,210))
 
-        self.screen.blit(self.__score_board,(825,550))
-        self.screen.blit(self.__score_text, (835, 560))
-        self.screen.blit(self.__life_text, (835,610))
+        self.screen.blit(self.__stats_board_small,(820, 520))
+        
+        self.screen.blit(self.__stats_small,(825,530))
+        self.screen.blit(self.__stats_wboard_small, (820,570))
+        self.screen.blit(self.__score_board,(825,580))
+        self.screen.blit(self.__hscore_text, (835, 590))
+        self.screen.blit(self.__score_text, (835, 630))
+        self.screen.blit(self.__life_text, (835,699))     
+        self.screen.blit(self.__level_text, (835,720))
+
+        # highscore
+        self.__score_text1 = pg.font.Font(get_font('retro1.ttf'), 30)
+        self.__score_text1 = self.__score_text1.render(str(100000),1, Y_GREEN)
+        self.screen.blit(self.__score_text1, (835, 605))
 
         # score
-        self.__score_text1 = pg.font.Font(get_font('retro1.ttf'), 40)
-        self.__score_text1 = self.__score_text1.render(str(self.__score),1, Y_GREEN)
-        self.screen.blit(self.__score_text1, (835, 580))
+        self.__score_text2 = pg.font.Font(get_font('retro1.ttf'), 30)
+        self.__score_text2 = self.__score_text2.render(str(self.__score),1, Y_GREEN)
+        self.screen.blit(self.__score_text2, (835, 645))
         
         # life 
-        self.__life_text1 = pg.font.Font(get_font('retro1.ttf'), 40)
+        self.__life_text1 = pg.font.Font(get_font('retro1.ttf'), 30)
         self.__life_text1 = self.__life_text1.render(str(self.__life),1, Y_GREEN)
-        self.screen.blit(self.__life_text1, (835, 630))
+        self.screen.blit(self.__life_text1, (950, 690))
+
+        # level
+        self.__life_text1 = pg.font.Font(get_font('retro1.ttf'), 30)
+        self.__life_text1 = self.__life_text1.render(str(3),1, Y_GREEN)
+        self.screen.blit(self.__life_text1, (950, 710))
 
 
         if self.__show_start_info:
@@ -143,8 +162,11 @@ class GameScreen(BaseScreen):
         self.__bg_image = pg.image.load(get_image('bg_image2.png'))
         self.__bg_image = pg.transform.scale(self.__bg_image,WINDOW_SIZE)
 
-        self.__score_board = pg.Surface((160, 130))
+        self.__score_board = pg.Surface((160, 160))
         self.__score_board.fill(BLACK)
+
+        self.__lockdown_board_small = pg.Surface((170,156))
+        self.__lockdown_board_small.fill(RED)
 
         self.__lockdown_board = pg.Surface((650, 230))
         self.__lockdown_board.fill(RED)
@@ -154,6 +176,18 @@ class GameScreen(BaseScreen):
 
         self.__map_image = pg.image.load(get_image('map.jpg'))
         self.__map_image = pg.transform.scale(self.__map_image,(160,100))
+
+        self.__ctips_image = pg.image.load(get_image(COVID_TIPS))
+        self.__ctips_image = pg.transform.scale(self.__ctips_image,(160,280))
+
+        self.__ctips_board_small = pg.Surface((170,290))
+        self.__ctips_board_small.fill(GREEN)
+
+        self.__stats_board_small = pg.Surface((170,40))
+        self.__stats_board_small.fill(RED)
+
+        self.__stats_wboard_small = pg.Surface((170,180))
+        self.__stats_wboard_small.fill(GRAY)
 
     def __load_sounds(self):
         self.__sound = pg.mixer.Sound(get_sound(BG_MUSIC))
@@ -188,13 +222,22 @@ class GameScreen(BaseScreen):
         self.__future_msg = pg.font.SysFont(FONT_SUB_1, 25)
         self.__future_msg = self.__future_msg.render(TEXT_FUTURE,1, GRAY)
 
-        self.__score_text = pg.font.SysFont(FONT_SUB_1, 28)
+        self.__score_text = pg.font.SysFont(FONT_SUB_1, 20)
         self.__score_text = self.__score_text.render(TEXT_SCORE,1, GREEN)
 
-        self.__life_text = pg.font.SysFont(FONT_SUB_1, 28)
+        self.__life_text = pg.font.SysFont(FONT_SUB_1, 20)
         self.__life_text = self.__life_text.render(TEXT_LIFE,1, GREEN)
+
+        self.__hscore_text = pg.font.SysFont(FONT_SUB_1, 20)
+        self.__hscore_text = self.__hscore_text.render(TEXT_HIGH_SCORE,1, GREEN)
+
+        self.__level_text = pg.font.SysFont(FONT_SUB_1, 20)
+        self.__level_text = self.__level_text.render(TEXT_LEVEL,1, GREEN)
 
         self.__lockdown_small = pg.font.Font(get_font(FONT_MAIN_1), 30)
         self.__lockdown_small = self.__lockdown_small.render(APP_NAME,1, WHITE)
+
+        self.__stats_small = pg.font.Font(get_font(FONT_MAIN_1), 25)
+        self.__stats_small = self.__stats_small.render(TEXT_STATS_DISPLAY,1, WHITE)
 
         
