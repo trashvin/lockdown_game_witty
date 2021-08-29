@@ -12,6 +12,7 @@ from lockdown.elements.ball import Ball
 from lockdown.library import *
 from lockdown.elements.virus import Virus
 from lockdown.elements.brick import Brick
+from lockdown.screens.ending_screen import EndingScreen
 
 class Lockdown:
     
@@ -39,8 +40,9 @@ class Lockdown:
     def initialize(self):
         opening_screen = OpeningScreen('opening screen', BLACK, self.screen, self.__log)
         game_screen = GameScreen('game screen', (33,33,33), self.screen, self.__log)
+        end_screen = EndingScreen('opening screen', BLACK, self.screen, self.__log)
 
-        self.screens = [opening_screen, game_screen]
+        self.screens = [opening_screen, game_screen, end_screen]
         self.__current_screen = 0
         self.__level = 1
         self.__virus_count = 0
@@ -135,22 +137,19 @@ class Lockdown:
                                     ball_dead = False
                     
                     elif event.key == pg.K_RETURN:
-                        if self.__current_screen == 1:
-                            # restart playing after the ball was dead or lockdown
+                        if self.__current_screen == 2:
                             if level_status == 3:
                                 self.__log.log('restarting game ....')
-                                self.screens[self.__current_screen].show_completed_message(0)
                                 self.initialize()
                                 self.start()
                                 
                                 # self.__level += 1
-                            elif level_status == 4:
+                        if self.__current_screen == 1:
+                            if level_status == 4:
                                 self.screens[self.__current_screen].show_completed_message(0)
                                 self.__log.log('advancing to a new level..')
                                 self.next_level()
                                 self.start()
-
-                                
 
                     elif event.key == pg.K_ESCAPE:
                         if self.__current_screen == 1:
@@ -199,7 +198,8 @@ class Lockdown:
                             if self.__life == 0:
                                 self.__log.log('game over, lockdown!')
                                 level_status = 3
-                                self.screens[self.__current_screen].set_lockdown(True)
+                                self.__current_screen += 1
+                                self.screens[self.__current_screen].show(False)
                             else:
                                 self.__log.log('game continues with reduced life')
                                 self.screens[self.__current_screen].restart_life(True)
@@ -231,7 +231,8 @@ class Lockdown:
                                             if self.__level == MAX_LEVEL:
                                                 level_status = 5
                                                 # show game completed
-                                                self.screens[self.__current_screen].show_completed_message(GAME_COMPLETE)
+                                                self.__current_screen += 1
+                                                self.screens[self.__current_screen].show(True)
                                             else:
                                                 level_status = 4
                                                 # show level completed

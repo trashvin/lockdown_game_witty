@@ -114,10 +114,10 @@ class GameScreen(BaseScreen):
             # pg.mixer.Channel(0).play(self.__lockdown_sound)
 
         if self.__show_level_completed_msg:
-            self.screen.blit(self.__completion_board,(100,400))
-            self.screen.blit(self.__level_complete_msg,(250,435))
-            self.screen.blit(self.__next_level_msg,(235,540)) 
-            self.screen.blit(self.__future_msg,(195,580))
+            self.screen.blit(self.__completion_board,(100,250))
+            self.screen.blit(self.__level_complete_msg,(250, 285))
+            self.screen.blit(self.__next_level_msg,(235,390)) 
+            self.screen.blit(self.__future_msg,(195,430))
 
         if self.__show_game_completed_msg:
             self.screen.blit(self.__completion_board,(100,400))
